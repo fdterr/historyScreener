@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import logo from "../../assets/img/logo.svg";
-import Greetings from "../../containers/Greetings/Greetings";
+import { Input, Modal } from "@mantine/core";
+
 import "./Popup.css";
 
 const Popup = () => {
@@ -10,9 +10,7 @@ const Popup = () => {
   const [deleteSite, setDeleteSite] = useState(null);
 
   useEffect(() => {
-    chrome.runtime.sendMessage({ type: "mount" }, () => {
-      console.log("popupMounted message sent!");
-    });
+    chrome.runtime.sendMessage({ type: "mount" });
 
     const blockedSites = localStorage.getItem("history_blocked_sites");
     if (blockedSites) {
@@ -25,7 +23,6 @@ const Popup = () => {
   }, [sites]);
 
   const updateSites = () => {
-    console.log("updating sites", sites, localStorage);
     localStorage.setItem("history_blocked_sites", JSON.stringify(sites));
   };
 
@@ -52,7 +49,7 @@ const Popup = () => {
         </tbody>
       </table>
       <div style={{ display: "flex" }}>
-        <input
+        <Input
           value={newSite}
           onChange={(evt) => setNewSite(evt.target.value)}
           placeholder="Add a site"
@@ -65,7 +62,12 @@ const Popup = () => {
         >
           Add
         </button>
-        <div hidden={!deleteConfirm}>Are you sure you want to delete {deleteSite}</div>
+        {/* <div id="delete-confirm" hidden={!deleteConfirm}> */}
+        {/* Are you sure you want to delete {deleteSite} */}
+        {/* </div> */}
+        <Modal opened={deleteConfirm} onClose={setDeleteConfirm} closeOnOutsideClick={false} title="Authentication">
+          <p>Are you sure you want to delete {deleteSite}</p>
+        </Modal>
       </div>
     </div>
   );

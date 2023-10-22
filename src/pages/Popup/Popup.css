@@ -43,3 +43,11 @@
     transform: rotate(360deg);
   }
 }
+
+#delete-confirm {
+  position: absolute;
+  border: 1px solid red;
+  top: 5px;
+  background: black;
+  color: white;
+}
