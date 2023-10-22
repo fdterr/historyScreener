@@ -6,7 +6,9 @@ class GreetingComponent extends Component {
     name: 'dev',
   };
 
+  
   render() {
+    console.log('Greetingcomponent');
     return (
       <div>
         <p>Hello, {this.state.name}!</p>
