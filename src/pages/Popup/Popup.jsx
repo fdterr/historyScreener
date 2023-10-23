@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Input, Modal } from "@mantine/core";
+import { Button, Input, Modal } from "@mantine/core";
 
 import "./Popup.css";
 
@@ -65,8 +65,22 @@ const Popup = () => {
         {/* <div id="delete-confirm" hidden={!deleteConfirm}> */}
         {/* Are you sure you want to delete {deleteSite} */}
         {/* </div> */}
-        <Modal opened={deleteConfirm} onClose={setDeleteConfirm} closeOnOutsideClick={false} title="Authentication">
-          <p>Are you sure you want to delete {deleteSite}</p>
+        <Modal
+          opened={deleteConfirm}
+          onClose={setDeleteConfirm}
+          closeOnOutsideClick={false}
+          title="Authentication"
+        >
+          <p>Are you sure you want to delete {deleteSite}</p>{" "}
+          <Button
+            onClick={() => {
+              setSites(sites.filter((s) => s !== deleteSite))
+              setDeleteConfirm(false);
+              setDeleteSite(null);
+            }}
+          >
+            Yes
+          </Button>
         </Modal>
       </div>
     </div>

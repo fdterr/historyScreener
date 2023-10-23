@@ -6,8 +6,10 @@
   right: 0px;
   text-align: center;
   height: 100%;
-  padding: 10px;
+  min-height: 250px;
   background-color: #282c34;
+  color: white;
+    padding: 0px 10px
 }
 
 .App-logo {
