@@ -21,7 +21,7 @@ const ConfirmModal = ({
     <Button
       onClick={() => {
         console.log("deleting", deleteSite);
-        console.log('sites', sites);
+        console.log("sites", sites);
         console.log(
           "newSites is",
           sites.filter((s) => s !== deleteSite)
@@ -67,49 +67,47 @@ const Popup = () => {
 
   return (
     <div className="App">
-      <div className="InnerApp">
-        <table>
-          <tbody>
-            {sites?.map((site, index) => (
-              <tr key={index}>
-                <td>{site}</td>
-                <td>
-                  <button
-                    onClick={() => {
-                      setDeleteConfirm(true);
-                      setDeleteSite(site);
-                    }}
-                  >
-                    Remove
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div style={{ display: "flex" }}>
-          <Input
-            value={newSite}
-            onChange={(evt) => setNewSite(evt.target.value)}
-            placeholder="Add a site"
-          />{" "}
-          <button
-            onClick={() => {
-              setSites([...sites, newSite]);
-              setNewSite("");
-            }}
-          >
-            Add
-          </button>
-          <ConfirmModal
-            deleteConfirm={deleteConfirm}
-            setDeleteConfirm={setDeleteConfirm}
-            deleteSite={deleteSite}
-            setSites={setSites}
-            setDeleteSite={setDeleteSite}
-            sites={sites}
-          />
-        </div>
+      <table>
+        <tbody>
+          {sites?.map((site, index) => (
+            <tr key={index}>
+              <td>{site}</td>
+              <td>
+                <button
+                  onClick={() => {
+                    setDeleteConfirm(true);
+                    setDeleteSite(site);
+                  }}
+                >
+                  Remove
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div style={{ display: "flex" }}>
+        <Input
+          value={newSite}
+          onChange={(evt) => setNewSite(evt.target.value)}
+          placeholder="Add a site"
+        />{" "}
+        <button
+          onClick={() => {
+            setSites([...sites, newSite]);
+            setNewSite("");
+          }}
+        >
+          Add
+        </button>
+        <ConfirmModal
+          deleteConfirm={deleteConfirm}
+          setDeleteConfirm={setDeleteConfirm}
+          deleteSite={deleteSite}
+          setSites={setSites}
+          setDeleteSite={setDeleteSite}
+          sites={sites}
+        />
       </div>
     </div>
   );

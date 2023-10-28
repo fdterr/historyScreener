@@ -1,4 +1,4 @@
-.InnerApp {
+.App {
   position: absolute;
   top: 0px;
   bottom: 0px;
@@ -9,7 +9,8 @@
   min-height: 250px;
   background-color: #282c34;
   color: white;
-  padding: 0px 10px;
+  padding: 0px 20px;
+    padding-top: 20px;
 }
 
 .App-logo {
@@ -17,9 +18,6 @@
   pointer-events: none;
 }
 
-/* .App {
-  padding-bottom: 50px;
-} */
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
