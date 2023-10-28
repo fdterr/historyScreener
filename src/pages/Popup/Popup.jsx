@@ -3,6 +3,8 @@ import { Button, Input, Modal } from "@mantine/core";
 
 import "./Popup.css";
 
+const BLOCKED_SITES_KEY = "history_blocked_sites";
+
 const ConfirmModal = ({
   deleteConfirm,
   setDeleteConfirm,
@@ -45,13 +47,13 @@ const Popup = () => {
   // On mount (Popup opened), get blocked sites from local storage
   // If we have blocked sites, set them in state and send to background page
   useEffect(() => {
-    const blockedSites = localStorage.getItem("history_blocked_sites");
+    const blockedSites = localStorage.getItem(BLOCKED_SITES_KEY);
 
     if (blockedSites) {
       setSites(JSON.parse(blockedSites));
 
       chrome.runtime.sendMessage({
-        type: "mount",
+        type: "blocked_sites",
         sites: JSON.parse(blockedSites),
       });
     }
@@ -62,7 +64,7 @@ const Popup = () => {
   }, [sites]);
 
   const updateSites = () => {
-    localStorage.setItem("history_blocked_sites", JSON.stringify(sites));
+    localStorage.setItem(BLOCKED_SITES_KEY, JSON.stringify(sites));
   };
 
   return (
@@ -96,6 +98,11 @@ const Popup = () => {
           onClick={() => {
             setSites([...sites, newSite]);
             setNewSite("");
+
+            chrome.runtime.sendMessage({
+              type: "new_site",
+              site: newSite,
+            });
           }}
         >
           Add

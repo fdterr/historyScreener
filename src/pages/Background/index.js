@@ -2,19 +2,30 @@ console.log("This is the background page.");
 
 let sites = [];
 
+chrome.history.onVisited.addListener(async function (historyItem) {
+  const parsedSite = parseSite(historyItem.url);
+  const domainOnly = parsedSite.split("/")[0];
+  if (sites.includes(domainOnly)) {
+    console.log("blocking", domainOnly);
+    await deleteSiteFromHistory(domainOnly);
+  }
+});
+
 chrome.runtime.onMessage.addListener(async function (
   request,
   sender,
   sendResponse
 ) {
-  const sites = request.sites;
-  console.log("sites", sites.length);
-  if (!!sites.length) {
-    sites.forEach(async (site) => {
-      const parsedSite = parseSite(site);
-      console.log("parsedSite", parsedSite);
-      await deleteSiteFromHistory(parsedSite);
-    });
+  if (request.type === "new_site") {
+    console.log("received newSite");
+    const parsedSite = parseSite(request.site);
+    sites.push(parsedSite);
+    await deleteSiteFromHistory(parsedSite);
+  }
+
+  if (request.type === "blocked_sites") {
+    sites = request.sites.map(parseSite);
+    console.log("received full sites list - parsed:", sites);
   }
 });
 
@@ -38,12 +49,7 @@ async function deleteSiteFromHistory(site) {
     maxResults: 0,
   });
   const matches = history.filter((item) => item.url.includes(site));
-  console.log("matches", matches);
   matches.forEach((match) => chrome.history.deleteUrl({ url: match.url }));
 }
-
-setInterval(() => {
-  console.log("time", new Date());
-}, 5000);
 
 (async () => {})();
