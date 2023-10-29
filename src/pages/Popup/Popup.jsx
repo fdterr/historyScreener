@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Checkbox, Input, Modal, TextInput } from "@mantine/core";
+import { Button, Checkbox, Modal, TextInput, Text } from "@mantine/core";
 
 import "./Popup.css";
 
@@ -16,12 +16,13 @@ const ConfirmModal = ({
   sites,
 }) => (
   <Modal
+    size="sm"
     opened={deleteConfirm}
     onClose={setDeleteConfirm}
     closeOnClickOutside={false}
     withCloseButton={false}
   >
-    <p>Are you sure you want to delete {deleteSite?.url}</p>{" "}
+    <span>Are you sure you want to delete {deleteSite?.url}</span>{" "}
     <div className="yes-no-confirm">
       <Button
         onClick={() => {
@@ -93,7 +94,9 @@ const Popup = () => {
     <div className="App">
       {sites?.map((site, index) => (
         <div className="site-row">
-          <span>{site.url}</span>
+          <Text style={{ width: "30%" }} truncate="end" size="xs">
+            {site.url}
+          </Text>
           <Checkbox
             checked={site.root}
             label={siteOptions.root.label}
@@ -123,7 +126,7 @@ const Popup = () => {
           value={newSite}
           onChange={(evt) => {
             setInputError(false);
-            setNewSite(evt.target.value)
+            setNewSite(evt.target.value);
           }}
           label="Add a new site"
           placeholder="http://google.com"
@@ -142,10 +145,13 @@ const Popup = () => {
               setInputError("Site already exists");
               return;
             }
-            
+
             // Check for a valid URL - can be with or without http(s) or www
-            const urlRegex = /^(https?:\/\/)?(www\.)?([a-z0-9]+(-?[a-z0-9]+)*\.)+[a-z]{2,}$/i;
-            if (!urlRegex.test(newSite)) {
+            // as well as any search or query params. Should only allow valid tlds
+            const urlRegex = /^(?:https?:\/\/)?(?:www\.)?[\w.-]+\.[a-z]{2,}(?:\/.*)?$/;
+            const validUrl = urlRegex.test(newSite);
+
+            if (!validUrl) {
               setInputError("Please enter a valid URL");
               return;
             }

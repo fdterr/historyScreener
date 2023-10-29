@@ -7,7 +7,6 @@ html {
   bottom: 0px;
   left: 0px;
   right: 0px;
-  text-align: center;
   width: 100%;
   min-width: 500px;
   height: 100%;
@@ -28,7 +27,6 @@ html {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  white-space: nowrap;
 }
 
 .yes-no-confirm {
