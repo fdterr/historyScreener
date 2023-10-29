@@ -21,11 +21,11 @@ chrome.runtime.onMessage.addListener(async function (
   if (request.type === "new_site") {
     // On receiving a new site, parse the url, add it to the list of sites,
     // and delete it from history
-    console.log("received newSite");
+    console.log("received newSite", request.site.url);
     const parsedSite = parseSite(request.site.url);
     sites.push({ ...request.site, url: parsedSite });
     await writeSitesToStorage();
-    await deleteSiteFromHistory(parsedSite.url);
+    await deleteSiteFromHistory(request.site.url);
   }
 
   if (request.type === "blocked_sites") {
