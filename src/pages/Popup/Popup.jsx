@@ -92,36 +92,42 @@ const Popup = () => {
 
   return (
     <div className="App">
-      {sites?.map((site, index) => (
-        <div className="site-row">
-          <Text style={{ width: "30%" }} truncate="end" size="xs">
-            {site.url}
-          </Text>
-          <Checkbox
-            checked={site.root}
-            label={siteOptions.root.label}
-            onChange={(evt) => {
-              updateSite(site, "root", evt.currentTarget.checked);
-            }}
-          />
-          <Checkbox
-            checked={site.exact}
-            label={siteOptions.exact.label}
-            onChange={(evt) =>
-              updateSite(site, "exact", evt.currentTarget.checked)
-            }
-          />
-          <button
-            onClick={() => {
-              setDeleteConfirm(true);
-              setDeleteSite(site);
-            }}
-          >
-            Remove
-          </button>
-        </div>
-      ))}
-      <div style={{ display: "flex" }}>
+      <div className="sites">
+        {sites?.map((site, index) => (
+          <div className="site-row" key={index}>
+            <Text style={{ width: "30%" }} truncate="end" size="xs">
+              {site.url}
+            </Text>
+            <Checkbox
+              checked={site.root}
+              label={siteOptions.root.label}
+              onChange={(evt) => {
+                updateSite(site, "root", evt.currentTarget.checked);
+              }}
+            />
+            <Checkbox
+              checked={site.exact}
+              label={siteOptions.exact.label}
+              onChange={(evt) =>
+                updateSite(site, "exact", evt.currentTarget.checked)
+              }
+            />
+            <Button
+              size="xs"
+              onClick={() => {
+                setDeleteConfirm(true);
+                setDeleteSite(site);
+              }}
+            >
+              Remove
+            </Button>
+          </div>
+        ))}
+      </div>
+      <div
+        className="add-new-site"
+        style={{ display: "flex", alignItems: "end" }}
+      >
         <TextInput
           value={newSite}
           onChange={(evt) => {
@@ -132,7 +138,7 @@ const Popup = () => {
           placeholder="http://google.com"
           error={inputError}
         />{" "}
-        <button
+        <Button
           onClick={() => {
             // Check for empty string
             if (!newSite) {
@@ -148,7 +154,8 @@ const Popup = () => {
 
             // Check for a valid URL - can be with or without http(s) or www
             // as well as any search or query params. Should only allow valid tlds
-            const urlRegex = /^(?:https?:\/\/)?(?:www\.)?[\w.-]+\.[a-z]{2,}(?:\/.*)?$/;
+            const urlRegex =
+              /^(?:https?:\/\/)?(?:www\.)?[\w.-]+\.[a-z]{2,}(?:\/.*)?$/;
             const validUrl = urlRegex.test(newSite);
 
             if (!validUrl) {
@@ -167,7 +174,7 @@ const Popup = () => {
           }}
         >
           Add
-        </button>
+        </Button>
         <ConfirmModal
           deleteConfirm={deleteConfirm}
           setDeleteConfirm={setDeleteConfirm}
