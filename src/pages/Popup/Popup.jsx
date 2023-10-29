@@ -22,21 +22,28 @@ const ConfirmModal = ({
     title="Authentication"
   >
     <p>Are you sure you want to delete {deleteSite?.url}</p>{" "}
-    <Button
-      onClick={() => {
-        console.log("deleting", deleteSite);
-        console.log("sites", sites);
-        console.log(
-          "newSites is",
-          sites.filter((s) => s.url !== deleteSite?.url)
-        );
-        setSites(sites?.filter((s) => s.url !== deleteSite?.url));
-        setDeleteConfirm(false);
-        setDeleteSite(null);
-      }}
-    >
-      Yes
-    </Button>
+    <div className="yes-no-confirm">
+      <Button
+        onClick={() => {
+          console.log("delete from list", deleteSite);
+          setSites(sites?.filter((s) => s.url !== deleteSite?.url));
+          setDeleteConfirm(false);
+          setDeleteSite(null);
+        }}
+      >
+        Yes
+      </Button>
+      <Button
+        variant="filled"
+        color="red"
+        onClick={() => {
+          setDeleteConfirm(false);
+          setDeleteSite(null);
+        }}
+      >
+        No
+      </Button>
+    </div>
   </Modal>
 );
 
@@ -52,7 +59,6 @@ const Popup = () => {
     const blockedSites = localStorage.getItem(BLOCKED_SITES_KEY);
 
     if (blockedSites) {
-      console.log('sites from storage', JSON.parse(blockedSites));
       setSites(JSON.parse(blockedSites));
 
       chrome.runtime.sendMessage({
@@ -63,13 +69,10 @@ const Popup = () => {
   }, []);
 
   useEffect(() => {
-    console.log("sites updated");
-    updateSites();
-    console.log('sites in storage is now', localStorage.getItem(BLOCKED_SITES_KEY))
+    updateSitesInLocalStorage();
   }, [sites]);
 
-  const updateSites = () => {
-    console.log("updating", sites);
+  const updateSitesInLocalStorage = () => {
     localStorage.setItem(BLOCKED_SITES_KEY, JSON.stringify(sites));
   };
 
