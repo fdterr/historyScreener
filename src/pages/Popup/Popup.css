@@ -23,6 +23,12 @@ html {
   pointer-events: none;
 }
 
+.sites {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 25px;
+}
 .site-row {
   display: flex;
   justify-content: space-between;
