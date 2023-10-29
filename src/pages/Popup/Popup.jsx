@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Button, Input, Modal } from "@mantine/core";
+import { Button, Input, Modal, Checkbox } from "@mantine/core";
 
 import "./Popup.css";
+
+import { siteOptions } from "./popupConfig";
 
 const BLOCKED_SITES_KEY = "history_blocked_sites";
 
@@ -69,25 +71,22 @@ const Popup = () => {
 
   return (
     <div className="App">
-      <table>
-        <tbody>
-          {sites?.map((site, index) => (
-            <tr key={index}>
-              <td>{site.url}</td>
-              <td>
-                <button
-                  onClick={() => {
-                    setDeleteConfirm(true);
-                    setDeleteSite(site);
-                  }}
-                >
-                  Remove
-                </button>
-              </td>
-            </tr>
+      {sites?.map((site, index) => (
+        <div className="site-row">
+          <span>{site.url}</span>
+          {siteOptions.map((option) => (
+            <Checkbox label={option.label} />
           ))}
-        </tbody>
-      </table>
+          <button
+            onClick={() => {
+              setDeleteConfirm(true);
+              setDeleteSite(site);
+            }}
+          >
+            Remove
+          </button>
+        </div>
+      ))}
       <div style={{ display: "flex" }}>
         <Input
           value={newSite}
