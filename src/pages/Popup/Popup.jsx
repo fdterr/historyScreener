@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Button, Input, Modal } from "@mantine/core";
+import { Button, Input, Modal, Checkbox } from "@mantine/core";
 
 import "./Popup.css";
+
+import { siteOptions } from "./popupConfig";
 
 const BLOCKED_SITES_KEY = "history_blocked_sites";
 
@@ -50,6 +52,7 @@ const Popup = () => {
     const blockedSites = localStorage.getItem(BLOCKED_SITES_KEY);
 
     if (blockedSites) {
+      console.log('sites from storage', JSON.parse(blockedSites));
       setSites(JSON.parse(blockedSites));
 
       chrome.runtime.sendMessage({
@@ -60,34 +63,57 @@ const Popup = () => {
   }, []);
 
   useEffect(() => {
+    console.log("sites updated");
     updateSites();
+    console.log('sites in storage is now', localStorage.getItem(BLOCKED_SITES_KEY))
   }, [sites]);
 
   const updateSites = () => {
+    console.log("updating", sites);
     localStorage.setItem(BLOCKED_SITES_KEY, JSON.stringify(sites));
+  };
+
+  // Find a given site in the blocked sites array, and add the provided key/value pair
+  const updateSite = (site, key, value) => {
+    const newSites = [...sites];
+
+    const siteIndex = newSites.findIndex((s) => s.url === site.url);
+
+    if (siteIndex > -1) {
+      newSites[siteIndex][key] = value;
+      setSites(newSites);
+    }
   };
 
   return (
     <div className="App">
-      <table>
-        <tbody>
-          {sites?.map((site, index) => (
-            <tr key={index}>
-              <td>{site.url}</td>
-              <td>
-                <button
-                  onClick={() => {
-                    setDeleteConfirm(true);
-                    setDeleteSite(site);
-                  }}
-                >
-                  Remove
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {sites?.map((site, index) => (
+        <div className="site-row">
+          <span>{site.url}</span>
+          <Checkbox
+            checked={site.root}
+            label={siteOptions.root.label}
+            onChange={(evt) => {
+              updateSite(site, "root", evt.currentTarget.checked);
+            }}
+          />
+          <Checkbox
+            checked={site.exact}
+            label={siteOptions.exact.label}
+            onChange={(evt) =>
+              updateSite(site, "exact", evt.currentTarget.checked)
+            }
+          />
+          <button
+            onClick={() => {
+              setDeleteConfirm(true);
+              setDeleteSite(site);
+            }}
+          >
+            Remove
+          </button>
+        </div>
+      ))}
       <div style={{ display: "flex" }}>
         <Input
           value={newSite}
@@ -96,12 +122,13 @@ const Popup = () => {
         />{" "}
         <button
           onClick={() => {
-            setSites([...sites, { url: newSite }]);
+            const newSiteObj = { url: newSite, root: true, exact: true };
+            setSites([...sites, newSiteObj]);
             setNewSite("");
 
             chrome.runtime.sendMessage({
               type: "new_site",
-              site: newSite,
+              site: newSiteObj,
             });
           }}
         >
