@@ -19,16 +19,16 @@ const ConfirmModal = ({
     closeOnClickOutside={false}
     title="Authentication"
   >
-    <p>Are you sure you want to delete {deleteSite}</p>{" "}
+    <p>Are you sure you want to delete {deleteSite?.url}</p>{" "}
     <Button
       onClick={() => {
         console.log("deleting", deleteSite);
         console.log("sites", sites);
         console.log(
           "newSites is",
-          sites.filter((s) => s !== deleteSite)
+          sites.filter((s) => s.url !== deleteSite?.url)
         );
-        setSites(sites?.filter((s) => s !== deleteSite));
+        setSites(sites?.filter((s) => s.url !== deleteSite?.url));
         setDeleteConfirm(false);
         setDeleteSite(null);
       }}
@@ -73,7 +73,7 @@ const Popup = () => {
         <tbody>
           {sites?.map((site, index) => (
             <tr key={index}>
-              <td>{site}</td>
+              <td>{site.url}</td>
               <td>
                 <button
                   onClick={() => {
@@ -96,7 +96,7 @@ const Popup = () => {
         />{" "}
         <button
           onClick={() => {
-            setSites([...sites, newSite]);
+            setSites([...sites, { url: newSite }]);
             setNewSite("");
 
             chrome.runtime.sendMessage({
