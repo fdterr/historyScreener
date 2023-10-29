@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Input, Modal, Checkbox } from "@mantine/core";
+import { Button, Checkbox, Input, Modal, TextInput } from "@mantine/core";
 
 import "./Popup.css";
 
@@ -19,7 +19,7 @@ const ConfirmModal = ({
     opened={deleteConfirm}
     onClose={setDeleteConfirm}
     closeOnClickOutside={false}
-    title="Authentication"
+    withCloseButton={false}
   >
     <p>Are you sure you want to delete {deleteSite?.url}</p>{" "}
     <div className="yes-no-confirm">
@@ -52,6 +52,7 @@ const Popup = () => {
   const [newSite, setNewSite] = useState("");
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [deleteSite, setDeleteSite] = useState(null);
+  const [inputError, setInputError] = useState(false);
 
   // On mount (Popup opened), get blocked sites from local storage
   // If we have blocked sites, set them in state and send to background page
@@ -118,14 +119,38 @@ const Popup = () => {
         </div>
       ))}
       <div style={{ display: "flex" }}>
-        <Input
+        <TextInput
           value={newSite}
-          onChange={(evt) => setNewSite(evt.target.value)}
-          placeholder="Add a site"
+          onChange={(evt) => {
+            setInputError(false);
+            setNewSite(evt.target.value)
+          }}
+          label="Add a new site"
+          placeholder="http://google.com"
+          error={inputError}
         />{" "}
         <button
           onClick={() => {
-            const newSiteObj = { url: newSite, root: true, exact: true };
+            // Check for empty string
+            if (!newSite) {
+              setInputError("Please enter a site to block");
+              return;
+            }
+
+            // Check for duplicate site
+            if (sites?.find((site) => site.url === newSite)) {
+              setInputError("Site already exists");
+              return;
+            }
+            
+            // Check for a valid URL - can be with or without http(s) or www
+            const urlRegex = /^(https?:\/\/)?(www\.)?([a-z0-9]+(-?[a-z0-9]+)*\.)+[a-z]{2,}$/i;
+            if (!urlRegex.test(newSite)) {
+              setInputError("Please enter a valid URL");
+              return;
+            }
+
+            const newSiteObj = { url: newSite, root: true, exact: false };
             setSites([...sites, newSiteObj]);
             setNewSite("");
 
