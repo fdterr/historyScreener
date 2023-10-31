@@ -95,7 +95,7 @@ const Popup = () => {
       <div className="sites">
         {sites?.map((site, index) => (
           <div className="site-row" key={index}>
-            <Text style={{ width: "30%" }} truncate="end" size="xs">
+            <Text style={{ width: "30%" }} truncate="end" size="md">
               {site.url}
             </Text>
             <Checkbox
@@ -126,7 +126,7 @@ const Popup = () => {
       </div>
       <div
         className="add-new-site"
-        style={{ display: "flex", alignItems: "end" }}
+        style={{ display: "flex", alignItems: "end", gap: "10px" }}
       >
         <TextInput
           value={newSite}
