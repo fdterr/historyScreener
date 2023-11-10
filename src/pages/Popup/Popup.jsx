@@ -98,20 +98,18 @@ const Popup = () => {
             <Text style={{ width: "30%" }} truncate="end" size="md">
               {site.url}
             </Text>
-            <Checkbox
-              checked={site.root}
-              label={siteOptions.root.label}
-              onChange={(evt) => {
-                updateSite(site, "root", evt.currentTarget.checked);
-              }}
-            />
-            <Checkbox
-              checked={site.exact}
-              label={siteOptions.exact.label}
-              onChange={(evt) =>
-                updateSite(site, "exact", evt.currentTarget.checked)
-              }
-            />
+            {Object.entries(siteOptions).map(([key, option]) => {
+              return (
+                <Checkbox
+                  key={key}
+                  checked={site[key]}
+                  label={option.label}
+                  onChange={(evt) => {
+                    updateSite(site, key, evt.currentTarget.checked);
+                  }}
+                />
+              );
+            })}
             <Button
               size="xs"
               onClick={() => {
