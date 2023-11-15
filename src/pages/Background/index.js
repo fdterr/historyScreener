@@ -1,4 +1,5 @@
 console.log("This is the background page.");
+// Test PR here
 
 let sites = [];
 
@@ -47,9 +48,7 @@ function exactDomainMatch(url) {
 chrome.history.onVisited.addListener(async function (historyItem) {
   const domain = stripPathAndProtocol(historyItem.url);
   const rD = rootDomain(historyItem.url);
-  const parsedFull = parseSite(historyItem.url);
-  console.log("Root Domain:", rD);
-  console.log("Full Domain (incl Sub)", domain);
+  const parsedFull = parseSite(historyItem.url); // Full domain excl. http://, https://, www.
 
   if (subDomainMatch(domain)) {
     deleteSiteFromHistory(historyItem.url);
