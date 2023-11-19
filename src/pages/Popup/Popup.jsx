@@ -103,6 +103,14 @@ const Popup = () => {
     }
   };
 
+  // Send a message to the background page to purge the history for a given site
+  const purgeSite = (site) => {
+    chrome.runtime.sendMessage({
+      type: "purge_site",
+      site,
+    });
+  };
+
   return (
     <div className="App">
       <div className="sites">
@@ -123,6 +131,9 @@ const Popup = () => {
                 />
               );
             })}
+            <Button size="xs" onClick={() => purgeSite(site)}>
+              Purge
+            </Button>
             <Button
               size="xs"
               onClick={() => {
