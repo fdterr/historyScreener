@@ -58,21 +58,34 @@ const Popup = () => {
   // On mount (Popup opened), get blocked sites from local storage
   // If we have blocked sites, set them in state and send to background page
   useEffect(() => {
+    loadSitesFromLocalStorage();
+    sendSitesToBackground();
+  }, []);
+
+  // When sites are updated, send them to background page and update local storage
+  useEffect(() => {
+    updateSitesInLocalStorage();
+    sendSitesToBackground();
+  }, [sites]);
+
+  const sendSitesToBackground = () => {
     const blockedSites = localStorage.getItem(BLOCKED_SITES_KEY);
 
     if (blockedSites) {
-      setSites(JSON.parse(blockedSites));
-
       chrome.runtime.sendMessage({
         type: "blocked_sites",
         sites: JSON.parse(blockedSites),
       });
     }
-  }, []);
+  };
 
-  useEffect(() => {
-    updateSitesInLocalStorage();
-  }, [sites]);
+  const loadSitesFromLocalStorage = () => {
+    const blockedSites = localStorage.getItem(BLOCKED_SITES_KEY);
+
+    if (blockedSites) {
+      setSites(JSON.parse(blockedSites));
+    }
+  };
 
   const updateSitesInLocalStorage = () => {
     localStorage.setItem(BLOCKED_SITES_KEY, JSON.stringify(sites));
