@@ -103,12 +103,20 @@ const Popup = () => {
     }
   };
 
+  // Send a message to the background page to purge the history for a given site
+  const purgeSite = (site) => {
+    chrome.runtime.sendMessage({
+      type: "purge_site",
+      site,
+    });
+  };
+
   return (
     <div className="App">
       <div className="sites">
         {sites?.map((site, index) => (
           <div className="site-row" key={index}>
-            <Text style={{ width: "30%" }} truncate="end" size="md">
+            <Text style={{ width: "20%" }} truncate="end" size="md">
               {site.url}
             </Text>
             {Object.entries(siteOptions).map(([key, option]) => {
@@ -123,6 +131,14 @@ const Popup = () => {
                 />
               );
             })}
+            <Button
+              variant="filled"
+              color="red"
+              size="xs"
+              onClick={() => purgeSite(site)}
+            >
+              Purge
+            </Button>
             <Button
               size="xs"
               onClick={() => {
@@ -174,7 +190,12 @@ const Popup = () => {
               return;
             }
 
-            const newSiteObj = { url: newSite, root: true, exact: false };
+            const newSiteObj = {
+              url: newSite,
+              root: false,
+              exact: true,
+              subdomain: false,
+            };
             setSites([...sites, newSiteObj]);
             setNewSite("");
 
