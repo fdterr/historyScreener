@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Button, Checkbox, Modal, TextInput, Text } from "@mantine/core";
+import {
+  Button,
+  Checkbox,
+  Modal,
+  Text,
+  TextInput,
+  Tooltip,
+} from "@mantine/core";
 
 import { siteOptions } from "./popupConfig";
 
@@ -119,14 +126,16 @@ const URLs = () => {
             </Text>
             {Object.entries(siteOptions).map(([key, option]) => {
               return (
-                <Checkbox
-                  key={key}
-                  checked={site[key]}
-                  label={option.label}
-                  onChange={(evt) => {
-                    updateSite(site, key, evt.currentTarget.checked);
-                  }}
-                />
+                <Tooltip multiline w={220} label={option.tooltip}>
+                  <Checkbox
+                    key={key}
+                    checked={site[key]}
+                    label={option.label}
+                    onChange={(evt) => {
+                      updateSite(site, key, evt.currentTarget.checked);
+                    }}
+                  />
+                </Tooltip>
               );
             })}
             <Button
@@ -214,7 +223,7 @@ const URLs = () => {
           sites={sites}
         />
       </div>
-      </>
+    </>
   );
 };
 export default URLs;
