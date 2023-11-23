@@ -24,10 +24,13 @@ function subDomainMatch(url) {
 // then this will return true
 function rootDomainMatch(url) {
   const domain = stripPathAndProtocol(url);
-  if (sites.map((site) => site.url).includes(domain)) {
-    return true;
+  for (const site of sites) {
+    if (site.root) {
+      if (domain === site.url) {
+        return true;
+      }
+    }
   }
-
   return false;
 }
 
@@ -50,13 +53,14 @@ chrome.history.onVisited.addListener(async function (historyItem) {
   const parsedFull = parseSite(historyItem.url);
   console.log("Root Domain:", rD);
   console.log("Full Domain (incl Sub)", domain);
+  console.log("Parsed Full", parsedFull);
 
   if (subDomainMatch(domain)) {
-    deleteSiteFromHistory(historyItem.url);
+    await deleteSingleHistoryEntry(historyItem.url);
   } else if (rootDomainMatch(historyItem.url)) {
-    deleteSiteFromHistory(historyItem.url);
+    await deleteSingleHistoryEntry(historyItem.url);
   } else if (exactDomainMatch(parsedFull)) {
-    deleteSiteFromHistory(historyItem.url);
+    await deleteSingleHistoryEntry(historyItem.url);
   }
 });
 
@@ -72,7 +76,6 @@ chrome.runtime.onMessage.addListener(async function (
     const parsedSite = parseSite(request.site.url);
     sites.push({ ...request.site, url: parsedSite });
     await writeSitesToStorage();
-    await deleteSiteFromHistory(request.site.url);
   }
 
   if (request.type === "blocked_sites") {
@@ -87,29 +90,52 @@ chrome.runtime.onMessage.addListener(async function (
     await writeSitesToStorage();
     console.log("received full sites list - parsed:", sites);
   }
+
+  if (request.type === "purge_site") {
+    console.log("purging site", request.site);
+    try {
+      await purgeUrl(request.site.url);
+    } catch (e) {
+      console.log("e", e);
+    }
+  }
 });
 
 // Parses a usable site from user input by removing any
 // preceeding http://, http://, and www. from the url
+// and any trailing slash
 function parseSite(site) {
   const parsedSite = site
     .replace("http://", "")
     .replace("https://", "")
-    .replace("www.", "");
+    .replace("www.", "")
+    .replace(/\/$/, "");
+
   return parsedSite;
 }
 
 // Completely deletes a site from history
 // Deletes every history item whose url contains the site
-async function deleteSiteFromHistory(site) {
+async function deleteSingleHistoryEntry(site) {
   console.log("deleting", site);
+  try {
+    await chrome.history.deleteUrl({ url: site });
+  } catch (e) {
+    console.log("e", e);
+  }
+}
+
+async function purgeUrl(url) {
   const history = await chrome.history.search({
     text: "",
     startTime: 0,
     maxResults: 0,
   });
-  const matches = history.filter((item) => item.url.includes(site));
-  matches.forEach((match) => chrome.history.deleteUrl({ url: match.url }));
+  const matches = history.filter((item) => item.url.includes(url));
+  matches.forEach((match) => {
+    console.log("match", match);
+    chrome.history.deleteUrl({ url: match.url });
+  });
 }
 
 // Strips any path or query from the url
@@ -136,7 +162,7 @@ async function writeSitesToStorage() {
 
 (async () => {
   // In case the user does not open the popup window after restarting chrome
-  // we must retrieve our list of blocked sites from localStorage
+  // we must retrieve our list of blocked sites from background localStorage
   sites = (await chrome.storage.local.get("history_blocked_sites"))
     .history_blocked_sites;
   console.log("sites", sites);
