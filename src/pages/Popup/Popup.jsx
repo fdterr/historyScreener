@@ -185,7 +185,12 @@ const Popup = () => {
               return;
             }
 
-            const newSiteObj = { url: newSite, root: true, exact: false };
+            const newSiteObj = {
+              url: newSite,
+              root: false,
+              exact: true,
+              subdomain: false,
+            };
             setSites([...sites, newSiteObj]);
             setNewSite("");
 
