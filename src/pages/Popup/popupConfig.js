@@ -7,7 +7,7 @@ const siteOptions = {
     label: "Root Domain",
   },
   subDomain: {
-    label: "Subdomain",
+    label: "Subdomains",
     onChange: (changeFunc) => changeFunc(),
   },
 };
