@@ -93,7 +93,11 @@ chrome.runtime.onMessage.addListener(async function (
 
   if (request.type === "purge_site") {
     console.log("purging site", request.site);
-    await deleteSingleHistoryEntry(request.site.url);
+    try {
+      await purgeUrl(request.site.url);
+    } catch (e) {
+      console.log("e", e);
+    }
   }
 });
 
@@ -114,7 +118,11 @@ function parseSite(site) {
 // Deletes every history item whose url contains the site
 async function deleteSingleHistoryEntry(site) {
   console.log("deleting", site);
-  await chrome.history.deleteUrl({ url: site });
+  try {
+    await chrome.history.deleteUrl({ url: site });
+  } catch (e) {
+    console.log("e", e);
+  }
 }
 
 async function purgeUrl(url) {
@@ -123,7 +131,7 @@ async function purgeUrl(url) {
     startTime: 0,
     maxResults: 0,
   });
-  const matches = history.filter((item) => item.url.includes(site));
+  const matches = history.filter((item) => item.url.includes(url));
   matches.forEach((match) => {
     console.log("match", match);
     chrome.history.deleteUrl({ url: match.url });

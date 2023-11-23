@@ -131,7 +131,12 @@ const Popup = () => {
                 />
               );
             })}
-            <Button size="xs" onClick={() => purgeSite(site)}>
+            <Button
+              variant="filled"
+              color="red"
+              size="xs"
+              onClick={() => purgeSite(site)}
+            >
               Purge
             </Button>
             <Button
