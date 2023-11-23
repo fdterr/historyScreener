@@ -116,7 +116,7 @@ const Popup = () => {
       <div className="sites">
         {sites?.map((site, index) => (
           <div className="site-row" key={index}>
-            <Text style={{ width: "30%" }} truncate="end" size="md">
+            <Text style={{ width: "20%" }} truncate="end" size="md">
               {site.url}
             </Text>
             {Object.entries(siteOptions).map(([key, option]) => {
