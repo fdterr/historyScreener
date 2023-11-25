@@ -54,7 +54,7 @@ const ConfirmModal = ({
 );
 
 const URLs = () => {
-  const [sites, setSites] = useState([]);
+  const [sites, setSites] = useState(null);
   const [newSite, setNewSite] = useState("");
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [deleteSite, setDeleteSite] = useState(null);
@@ -64,32 +64,29 @@ const URLs = () => {
   // If we have blocked sites, set them in state and send to background page
   useEffect(() => {
     loadSitesFromLocalStorage();
-    sendSitesToBackground();
   }, []);
 
   // When sites are updated, send them to background page and update local storage
   useEffect(() => {
+    console.log("sites", sites);
     updateSitesInLocalStorage();
     sendSitesToBackground();
   }, [sites]);
 
   const sendSitesToBackground = () => {
-    const blockedSites = localStorage.getItem(BLOCKED_SITES_KEY);
+    const blockedSites = JSON.parse(localStorage.getItem(BLOCKED_SITES_KEY));
+    console.log("blockedSites", blockedSites);
 
     if (blockedSites) {
       chrome.runtime.sendMessage({
         type: "blocked_sites",
-        sites: JSON.parse(blockedSites),
+        sites: blockedSites,
       });
     }
   };
 
   const loadSitesFromLocalStorage = () => {
-    const blockedSites = localStorage.getItem(BLOCKED_SITES_KEY);
-
-    if (blockedSites) {
-      setSites(JSON.parse(blockedSites));
-    }
+    chrome.runtime.sendMessage({ type: "get_sites" }, setSites);
   };
 
   const updateSitesInLocalStorage = () => {
@@ -126,7 +123,7 @@ const URLs = () => {
             </Text>
             {Object.entries(siteOptions).map(([key, option]) => {
               return (
-                <Tooltip multiline w={220} label={option.tooltip}>
+                <Tooltip multiline w={220} label={option.tooltip} key={key}>
                   <Checkbox
                     key={key}
                     checked={site[key]}

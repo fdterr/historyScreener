@@ -79,6 +79,7 @@ chrome.runtime.onMessage.addListener(async function (
   }
 
   if (request.type === "blocked_sites") {
+    console.log("received full sites", request.sites);
     // When user opens the popup, receive the new list of blocked sites
     // and set sites locally
     const newSites = request.sites.map((site) => {
@@ -88,7 +89,6 @@ chrome.runtime.onMessage.addListener(async function (
 
     sites = newSites;
     await writeSitesToStorage();
-    console.log("received full sites list - parsed:", sites);
   }
 
   if (request.type === "purge_site") {
@@ -98,6 +98,11 @@ chrome.runtime.onMessage.addListener(async function (
     } catch (e) {
       console.log("e", e);
     }
+  }
+
+  if (request.type === "get_sites") {
+    console.log("sending full sites to front end");
+    sendResponse(sites);
   }
 });
 
