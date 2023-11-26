@@ -1,4 +1,5 @@
 console.log("This is the background page.");
+// project test comment
 
 let sites = [];
 
