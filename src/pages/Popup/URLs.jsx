@@ -144,6 +144,7 @@ const URLs = () => {
               Purge
             </Button>
             <Button
+              loading={site === deleteSite}
               size="xs"
               onClick={() => {
                 setDeleteConfirm(true);
