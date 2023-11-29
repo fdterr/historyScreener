@@ -45,9 +45,7 @@ function exactDomainMatch(url) {
   return false;
 }
 
-// When a new site is visited, check if it is in the list of blocked sites
-// and delete if so
-chrome.history.onVisited.addListener(async function (historyItem) {
+async function checkAndDeleteHistoryItem(historyItem) {
   const domain = stripPathAndProtocol(historyItem.url);
   const rD = rootDomain(historyItem.url);
   const parsedFull = parseSite(historyItem.url);
@@ -62,7 +60,11 @@ chrome.history.onVisited.addListener(async function (historyItem) {
   } else if (exactDomainMatch(parsedFull)) {
     await deleteSingleHistoryEntry(historyItem.url);
   }
-});
+}
+
+// When a new site is visited, check if it is in the list of blocked sites
+// and delete if so
+chrome.history.onVisited.addListener(checkAndDeleteHistoryItem);
 
 chrome.runtime.onMessage.addListener(async function (
   request,
@@ -138,8 +140,7 @@ async function purgeUrl(url) {
   });
   const matches = history.filter((item) => item.url.includes(url));
   matches.forEach((match) => {
-    console.log("match", match);
-    chrome.history.deleteUrl({ url: match.url });
+    checkAndDeleteHistoryItem(match);
   });
 }
 
